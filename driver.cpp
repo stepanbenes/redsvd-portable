@@ -60,9 +60,21 @@ void assembleOutput(Svd& svd, /*out*/ double* singularValues, /*out*/ double* U_
 	}
 }
 
+#if defined(_MSC_VER)
+//  Microsoft 
+#define EXPORT __declspec(dllexport)
+#elif defined(_GCC)
+//  GCC
+#define EXPORT __attribute__((visibility("default")))
+#else
+//  do nothing and hope for the best?
+#define EXPORT
+#pragma warning Unknown dynamic link import/export semantics.
+#endif
+
 extern "C"
 {
-	__declspec(dllexport) void __stdcall ComputeSvdExact(const double* dataValuesRowMajor, int numberOfRows, int numberOfColumns, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
+	EXPORT void /*__stdcall*/ ComputeSvdExact(const double* dataValuesRowMajor, int numberOfRows, int numberOfColumns, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
 	{
 		MatrixXd A;
 		createMatrixA(dataValuesRowMajor, numberOfRows, numberOfColumns, A);
@@ -70,7 +82,7 @@ extern "C"
 		assembleOutput(svd_exact, singularValues, U_VT_ColumnMajor);
 	}
 
-	__declspec(dllexport) void __stdcall ComputeSvdRandomized(const double* dataValuesRowMajor, int numberOfRows, int numberOfColumns, int rank, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
+	EXPORT void /*__stdcall*/ ComputeSvdRandomized(const double* dataValuesRowMajor, int numberOfRows, int numberOfColumns, int rank, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
 	{
 		MatrixXd A;
 		createMatrixA(dataValuesRowMajor, numberOfRows, numberOfColumns, A);
