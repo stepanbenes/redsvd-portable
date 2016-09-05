@@ -74,18 +74,18 @@ void assembleOutput(Svd& svd, /*out*/ double* singularValues, /*out*/ double* U_
 
 extern "C"
 {
-	EXPORT void /*__stdcall*/ ComputeSvdExact(const double* dataValuesRowMajor, int numberOfRows, int numberOfColumns, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
+	EXPORT void /*__stdcall*/ ComputeSvdExact(const double* inputMatrix_RowMajor, int numberOfRows, int numberOfColumns, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
 	{
 		MatrixXd A;
-		createMatrixA(dataValuesRowMajor, numberOfRows, numberOfColumns, A);
+		createMatrixA(inputMatrix_RowMajor, numberOfRows, numberOfColumns, A);
 		Eigen::JacobiSVD<Eigen::MatrixXd/*, Eigen::NoQRPreconditioner*/> svd_exact(A, Eigen::ComputeThinU | Eigen::ComputeThinV); // compute
 		assembleOutput(svd_exact, singularValues, U_VT_ColumnMajor);
 	}
 
-	EXPORT void /*__stdcall*/ ComputeSvdRandomized(const double* dataValuesRowMajor, int numberOfRows, int numberOfColumns, int rank, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
+	EXPORT void /*__stdcall*/ ComputeSvdRandomized(const double* inputMatrix_RowMajor, int numberOfRows, int numberOfColumns, int rank, /*out*/ double* singularValues, /*out*/ double* U_VT_ColumnMajor)
 	{
 		MatrixXd A;
-		createMatrixA(dataValuesRowMajor, numberOfRows, numberOfColumns, A);
+		createMatrixA(inputMatrix_RowMajor, numberOfRows, numberOfColumns, A);
 		RedSVD svd_approx(A, rank); // compute
 		assembleOutput(svd_approx, singularValues, U_VT_ColumnMajor);
 	}
